@@ -6,14 +6,14 @@ const config = require('../config')
 const { compareSync,hashSync,genSaltSync } = require('bcryptjs')
 
 var userSchema = Schema({
+    document: { type: String, unique: true, lowercase:true, required : true},
     email: { type: String, unique: true, lowercase:true, required : true},
     name: {type : String, required :true},
     last_name: {type : String, required : true},
     password: { type: String,minlegth:[ 5, "debe tener almenos 5 caracteres"], required : true},
-    document: String,
     phone : { type: String, required : true },
     singUpDate: { type: Date, default: Date.now()},
-    lastLogin: Date,
+    lastLogin: Date
     
    
 });
