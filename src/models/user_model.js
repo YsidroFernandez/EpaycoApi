@@ -10,7 +10,7 @@ var userSchema = Schema({
     email: { type: String, unique: true, lowercase:true, required : true},
     name: {type : String, required :true},
     last_name: {type : String, required : true},
-    password: { type: String,minlegth:[ 5, "debe tener almenos 5 caracteres"], required : true},
+    password: { type: String,minlegth:[ 5, "must contain at least 5 characters"], required : true},
     phone : { type: String, required : true },
     singUpDate: { type: Date, default: Date.now()},
     lastLogin: Date

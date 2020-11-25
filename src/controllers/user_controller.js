@@ -22,7 +22,7 @@ function singUp(req, resp) {
 
 
     user.save((err, userStored) => {
-        if (err) resp.status(200).send({ status : 500, message: `Error to create user ${err}` })
+        if (err) resp.status(500).send({ status : 500, message: `Error to create user ${err}` })
         userStored.password = undefined;
         resp.status(200).send({ status: 200, user: userStored, message: "User registered successfully" });
     })
@@ -61,7 +61,7 @@ function singIn(req, resp) {
 function getUsers(req, resp) {
 
     let usuarios = [];
-    User.find({}, (err, users) => {
+    UserModel.find({}, (err, users) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })
         if (!users) return resp.status(404).send({ message: 'The users does not exist' })
 
@@ -75,10 +75,12 @@ function getUsers(req, resp) {
 
 function getUserById(req, resp) {
     let userId = req.params.userId
-    User.findById(userId, (err, user) => {
+    UserModel.findById(userId, (err, user) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })
         if (!user) return resp.status(404).send({ message: `The user does not exist` })
 
+
+        user.password = undefined;
         resp.status(200).send({ status: 200, user })
     })
 }
@@ -87,22 +89,18 @@ function updateUser(req, resp) {
     let userId = req.params.userId
     let update = req.body
 
-    User.findByIdAndUpdate(userId, update, (err, userUpdate) => {
+    UserModel.findByIdAndUpdate(userId, update, (err, userUpdate) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-
+        userUpdate.password = undefined;
         resp.status(200).send({ status: 200, user: userUpdate })
     })
 }
 
-function updateUserByUsername(username) {
-    User.findOneAndUpdate({ email: username }, { verified: true }, { new: true });
-}
 
 module.exports = {
     singUp,
     singIn,
     getUsers,
     getUserById,
-    updateUser,
-    updateUserByUsername
+    updateUser
 }
