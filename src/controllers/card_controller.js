@@ -29,7 +29,7 @@ function getCards(req, resp) {
 
     CardModel.find({}, (err, cards) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!users) return resp.status(404).send({ message: 'The cards does not exist' })
+        if (!cards) return resp.status(404).send({ message: 'The cards does not exist' })
 
         resp.status(200).send({ status: 200, cards })
     })
@@ -52,12 +52,12 @@ function updateCard(req, resp) {
     CardModel.findByIdAndUpdate(cardId, update, (err, cardUpdate) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })
 
-        resp.status(200).send({ status: 200, user: cardUpdate, message : "card update suceessfully" })
+        resp.status(200).send({ status: 200, card: cardUpdate, message : "card update suceessfully" })
     })
 }
 
 function deleteCard(req, resp) {
-    let cardId = req.params.Id
+    let cardId = req.params.cardId
 
     CardModel.findOneAndDelete(cardId,(err, card) => {
         if (err) return resp.status(500).send({ message: `Failed request ${err}` })

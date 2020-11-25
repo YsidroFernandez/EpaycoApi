@@ -18,7 +18,7 @@ const corsOptions = {
   allowedHeaders : ['X-Requested-With, Content-Type,X-Amz-Date, Authorization, X-Api-Key, Origin, Accept, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Access-Control-Allow-Origin']
 }
 
-// Configurar cabeceras y cors include before other routes
+// Setting headers and cors include before other routes
 
 app.options('*', cors());
 app.use(cors(corsOptions));
