@@ -29,7 +29,6 @@ api.put('/recharge',AuthMiddleware,AccountController.reachargeBalance); //rechar
 
 /*******************Purchase***************** */
 api.post('/registerPurchase',AuthMiddleware,PurchaseController.registerPurchase); // Send Pruchase
-api.post('/sendEmail',AuthMiddleware,PurchaseController.sendEmail); // Send verification
 api.post('/confirmPurchase',AuthMiddleware,PurchaseController.confirmPruchase); // Send Pruchase
 api.get('/getPurchases',AuthMiddleware,PurchaseController.getPurchases); // get all cards
 

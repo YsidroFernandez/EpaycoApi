@@ -18,8 +18,8 @@ function saveCard(req, resp) {
 
 
     card.save((err, cardStored) => {
-        if (err) resp.status(500).send({ status : 500, message: `Error to register card ${err}` })
-        resp.status(200).send({ status: 200, card: cardStored, message: "Card registered successfully" });
+        if (err) resp.status(500).send({ status : 500, message: `Error al registrar la tarjeta ${err}` })
+        resp.status(200).send({ status: 200, card: cardStored, message: "Tarjeta registrada satisfactoriamente" });
     })
 }
 
@@ -28,8 +28,8 @@ function saveCard(req, resp) {
 function getCards(req, resp) {
 
     CardModel.find({}, (err, cards) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!cards) return resp.status(404).send({ message: 'The cards does not exist' })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
+        if (!cards) return resp.status(404).send({ message: 'Tarjetas no encontradas' })
 
         resp.status(200).send({ status: 200, cards })
     })
@@ -38,8 +38,8 @@ function getCards(req, resp) {
 function getCardById(req, resp) {
     let cardId = req.params.cardId
     CardModel.findById(cardId, (err, card) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!card) return resp.status(404).send({ message: `The card does not exist` })
+        if (err) return resp.status(500).send({ message: `Error de solicitus ${err}` })
+        if (!card) return resp.status(404).send({ message: `Tarjeta no encontrada` })
 
         resp.status(200).send({ status: 200, card })
     })
@@ -50,9 +50,9 @@ function updateCard(req, resp) {
     let update = req.body
 
     CardModel.findByIdAndUpdate(cardId, update, (err, cardUpdate) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
 
-        resp.status(200).send({ status: 200, card: cardUpdate, message : "card update suceessfully" })
+        resp.status(200).send({ status: 200, card: cardUpdate, message : "Tarjeta actualizada correctamente" })
     })
 }
 
@@ -60,9 +60,9 @@ function deleteCard(req, resp) {
     let cardId = req.params.cardId
 
     CardModel.findOneAndDelete(cardId,(err, card) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
 
-        resp.status(200).send({ status: 200, card: card , message : "Card removed"})
+        resp.status(200).send({ status: 200, card: card , message : "Tarjeta eliminada"});
     })
 }
 

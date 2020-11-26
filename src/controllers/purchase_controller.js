@@ -5,34 +5,71 @@ const nodemailer = require("nodemailer");
 
 function registerPurchase(req, resp) { 
     
-    var cod = '';
+
+    //Generate token
+    let cod = '';
     for(var i=0; i<6 ; i++){
         cod += Math.floor((Math.random() * (9 - 1 + 1)) + 1);
      }
 
+    let amount = req.body.amount;
+    let session_id = req.sessionID;
+    let token = cod;
+    let id_user = req.body.id_user;
 
-    var purchase = new PurchaseModel(
-        {
-            amount: req.body.amount,
-            session_id : req.sessionID,
-            token : cod,
-            user: req.body.user
+
+    
+
+
+     AccountModel.find({user : id_user},(error, account)=>{
+        
+        if(account.length > 0){
+            
+            let new_account = account[0];
+
+            if(new_account.balance >  amount ){
+
+                var purchase = new PurchaseModel(
+                    {
+                        amount: amount,
+                        session_id : req.sessionID,
+                        token : cod,
+                        user: id_user
+                    }
+                );
+            
+            
+                purchase.save((err, purchaseStored) => {
+                    if (err) resp.status(500).send({ status : 500, message: `Error al registrar la compra ${err}` })
+                    
+                    if(purchaseStored != null){
+
+                        sendEmail(req,resp,token);
+                    }
+
+                })
+
+            }else{
+                resp.status(200).send({status : 401 ,message : 'Saldo insuficiente'});  
+            }
+
+        }else{
+            resp.status(200).send({status : 404 ,message : 'No posee una cuenta virtual'});
         }
-    );
+        
+
+        
+    });
 
 
-    purchase.save((err, purchaseStored) => {
-        if (err) resp.status(500).send({ status : 500, message: `Error to register the pruchase ${err}` })
-
-        resp.status(200).send({ status: 200, card: purchaseStored, message: "Purchase registered successfully" });
-    })
+    
 }
 
-function sendEmail(req,resp) {
+function sendEmail(req,resp, token) {
 
     let email = req.body.email;
-    let token = req.body.token;
-    let session = req.body.session;
+    let token_id = token;
+    let session = req.sessionID;
 
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -48,14 +85,14 @@ function sendEmail(req,resp) {
     let mailOptions = {
         from: '"Epayco services" <epaycoservices@example.com>', // sender address
         to: email, // list of receivers
-        subject: "Purchase confirmation ✔", // Subject line
+        subject: "Correo de confirmación ✔", // Subject line
         html : `
             <body>
-                <h2>Hello, please use this session code and token for confirm your purchase<h2>
+                <h3> Por favor introduzca los siguentes valores en los campos requeridos para verificar su compra<h3>
                 <br>
-                <label>${session}</label>
+                <h4> Session: ${session}</4>
                 <br>
-                <label>Token: ${token}</label>
+                <h4>Token: ${token_id}</h4>
             </body>
         ` 	
     };
@@ -66,7 +103,7 @@ function sendEmail(req,resp) {
         if(err){
         resp.status(500).send({status : 500, message : err.message});
         }else{
-            resp.status(200).send({status : 200, message : 'Email  sended!'});
+            resp.status(200).send({status : 200, message : 'Se ha enviado un correo a su cuenta con un código sesión y un token, requeridos para verificar la compra'});
         }
     });
 
@@ -75,8 +112,8 @@ function sendEmail(req,resp) {
 function getPurchases(req, resp) {
 
     PurchaseModel.find({}, (err, purchases) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!purchases) return resp.status(404).send({ message: 'The purchases does not exist' })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
+        if (!purchases) return resp.status(404).send({ message: 'Compras no encontradas' })
 
         resp.status(200).send({ status: 200, purchases })
     })
@@ -94,40 +131,45 @@ function confirmPruchase(req,resp){
     };
 
     PurchaseModel.findOneAndUpdate({ session_id : session, token : token }, body, {new : true} ,(err, purchase) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` });
-        
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` });
+  
         if(purchase != null){
 
             // update balance in the virtual account
-
-            AccountModel.find({user : id_user},(error, account)=>{
+            if(purchase.confirm != true){
+                AccountModel.find({user : id_user},(error, account)=>{
         
-                if(account.length > 0){
+                    if(account.length > 0){
+                        
+                        let new_account = account[0];
+    
+                        new_account.balance = (new_account.balance - amount);
+                      
+    
+                        AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (er, accountUpdate)=>{
+                            if(er) return resp.status(500).send({ message : `Error al actualizar el saldo de la cuenta ${er}`});
+            
+                            resp.status(200).send({ status: 200, purchase: accountUpdate , message : 'Compra registrada con éxito'});
+            
+                        });
+    
+    
+                    }else{
+                        resp.status(200).send({status : 404 ,message : 'Cuenta virtual no encontrada'});
+                    }
                     
-                    let new_account = account[0];
+    
+                    
+                });
 
-                    new_account.balance = (new_account.balance - amount);
-                  
-
-                    AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (er, accountUpdate)=>{
-                        if(er) return resp.status(500).send({ message : `Error to recharge balance ${er}`});
-        
-                        resp.status(200).send({ status: 200, purchase: accountUpdate , message : 'successful purchase'});
-        
-                    });
-
-
-                }else{
-                    resp.status(200).send({status : 404 ,message : 'Virtual account not found'});
-                }
-                
-
-                
-            });
+            }else{
+                resp.status(500 ).send({ status: 500, message : 'Error, la compra ya ha sido confirmada'});
+            }
+            
 
             
         }else{
-            resp.status(200).send({ status: 404, purchase: purchase , message : 'purchase not found'});
+            resp.status(200).send({ status: 404, purchase: purchase , message : 'Error al confirmar la compra'});
         }
         
     })

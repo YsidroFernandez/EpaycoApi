@@ -18,9 +18,9 @@ function registerAccount(req, resp) {
 
 
     account.save((err, accountStored) => {
-        if (err) resp.status(500).send({ status : 500, message: `Error to register the account ${err}` })
+        if (err) resp.status(500).send({ status : 500, message: `Error al registrar la cuenta ${err}` })
 
-        resp.status(200).send({ status: 200, card: accountStored, message: "Account registered successfully" });
+        resp.status(200).send({ status: 200, card: accountStored, message: "Cuenta registrada correctamente" });
     })
 }
 
@@ -29,8 +29,8 @@ function registerAccount(req, resp) {
 function getAccounts(req, resp) {
 
     AccountModel.find({}, (err, accounts) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!accounts) return resp.status(404).send({ message: 'The accounts does not exist' })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
+        if (!accounts) return resp.status(404).send({ message: 'Cuentas virtuales no encontradas' })
 
         resp.status(200).send({ status: 200, accounts })
     })
@@ -39,8 +39,8 @@ function getAccounts(req, resp) {
 function getAccountById(req, resp) {
     let accountId = req.params.accountdId
     AccountModel.findById(accountId, (err, account) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
-        if (!account) return resp.status(404).send({ message: `The accounts does not exist` })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
+        if (!account) return resp.status(404).send({ message: `Cuenta no encontrada` })
 
         resp.status(200).send({ status: 200, account })
     })
@@ -51,9 +51,9 @@ function updateAccount(req, resp) {
     let update = req.body
 
     AccountModel.findByIdAndUpdate(accountId, update, (err, accountUpdate) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
 
-        resp.status(200).send({ status: 200, account: accountUpdate, message : "account update suceessfully" })
+        resp.status(200).send({ status: 200, account: accountUpdate, message : "Cuenta actualizada correctamente" })
     })
 }
 
@@ -61,9 +61,9 @@ function deleteAccount(req, resp) {
     let accountId = req.params.accoountId
 
     AccountModel.findOneAndDelete(accountId,(err, account) => {
-        if (err) return resp.status(500).send({ message: `Failed request ${err}` })
+        if (err) return resp.status(500).send({ message: `Error de solicitud ${err}` })
 
-        resp.status(200).send({ status: 200, account: account , message : "Account removed"})
+        resp.status(200).send({ status: 200, account: account , message : "Cuenta eliminada correctamente"})
     })
 }
 
@@ -72,7 +72,7 @@ function reachargeBalance(req,resp){
     let  balance = req.body.balance;
 
     UserModel.find({ document: req.body.document, phone: req.body.phone }, (err, user) =>{
-        if(err) return resp.status(500).send({message : `Failed request ${err}`});
+        if(err) return resp.status(500).send({message : `Error de solicitud ${err}`});
 
         
         if(user.length > 0){
@@ -92,15 +92,15 @@ function reachargeBalance(req,resp){
                     new_account.balance += balance;
 
                     AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (error, account)=>{
-                        if(error) return resp.status(500).send({ message : `Error to recharge balance ${error}`});
+                        if(error) return resp.status(500).send({ message : `Error al hacer la racarga ${error}`});
         
-                        resp.status(200).send({status : 200 ,account ,message : 'Recharge successfully'});
+                        resp.status(200).send({status : 200 ,account ,message : 'Recarga satisfactoria'});
         
                     });
 
 
                 }else{
-                    resp.status(200).send({status : 200 ,account ,message : 'User account not found'});
+                    resp.status(200).send({status : 200 ,account ,message : 'Cuenta virtual no encontrada'});
                 }
                 
 
@@ -110,7 +110,7 @@ function reachargeBalance(req,resp){
                 
 
         }else{
-            resp.status(200).send({status : 404 ,message : 'User not found'});
+            resp.status(200).send({status : 404 ,message : 'Usuario no encontrado'});
 
         }
         
