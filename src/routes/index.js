@@ -25,5 +25,7 @@ api.delete('/card/:cardId',AuthMiddleware,CardController.deleteCard)  //update c
 api.post('/registerAccount',AuthMiddleware,AccountController.registerAccount); // Register virtual account
 api.get('/account',AuthMiddleware,AccountController.getAccounts); // get all accounts
 api.delete('/account/:accountId',AuthMiddleware,AccountController.deleteAccount)  //delete account
+api.put('/recharge',AuthMiddleware,AccountController.reachargeBalance); //recharge Balance
+
 
 module.exports = api

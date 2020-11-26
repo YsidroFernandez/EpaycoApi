@@ -67,13 +67,61 @@ function deleteAccount(req, resp) {
     })
 }
 
-function reachargeBalance(){
+function reachargeBalance(req,resp){
 
+    let  balance = req.body.balance;
+
+    UserModel.find({ document: req.body.document, phone: req.body.phone }, (err, user) =>{
+        if(err) return resp.status(500).send({message : `Failed request ${err}`});
+
+        
+        if(user.length > 0){
+            let id_user = user[0]['_id'];
+            
+            
+            
+
+            // Find the virtual account
+
+            AccountModel.find({user : id_user},(error, account)=>{
+
+                if(account.length > 0){
+                    
+                    let new_account = account[0];
+
+                    new_account.balance += balance;
+
+                    AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (error, account)=>{
+                        if(error) return resp.status(500).send({ message : `Error to recharge balance ${error}`});
+        
+                        resp.status(200).send({status : 200 ,account ,message : 'Recharge successfully'});
+        
+                    });
+
+
+                }else{
+                    resp.status(200).send({status : 200 ,account ,message : 'User account not found'});
+                }
+                
+
+                
+            });
+            
+                
+
+        }else{
+            resp.status(200).send({status : 404 ,message : 'User not found'});
+
+        }
+        
+        
+    });
 }
 module.exports = {
     registerAccount,
     getAccounts,
     getAccountById,
     updateAccount,
-    deleteAccount
+    deleteAccount,
+    reachargeBalance
 }
