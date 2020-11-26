@@ -6,6 +6,7 @@ const body_parser = require('body-parser');
 const api = require('./src/routes/index');
 const cors = require('cors');
 const app = express();
+var session = require('express-session')
 const {NotFoundMiddleware,ErrorMiddleware,AuthMiddleware} = require('./src/middelwares'); 
 
 
@@ -26,7 +27,12 @@ app.use(cors(corsOptions));
 app.use(body_parser.urlencoded({extended : true }));
 app.use(body_parser.json());
 app.use(helmet());
-
+app.use(session({
+  secret: 'jkhsduheu48u545ujdfjfdfdf',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { }
+}))
 
 app.use('/api', api);
 

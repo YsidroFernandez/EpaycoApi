@@ -5,7 +5,7 @@ const { CardModel } = require('../models')
 
 function saveCard(req, resp) { 
     
-    
+    console.log(req.sessionID)
     
     var card = new CardModel(
         {

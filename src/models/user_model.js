@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const config = require('../config')
 const { compareSync,hashSync,genSaltSync } = require('bcryptjs')
 
-var userSchema = Schema({
+var UserSchema = Schema({
     document: { type: String, unique: true, lowercase:true, required : true},
     email: { type: String, unique: true, lowercase:true, required : true},
     name: {type : String, required :true},
@@ -19,19 +19,19 @@ var userSchema = Schema({
 });
 
 
-userSchema.methods.toJson = function(){
+UserSchema.methods.toJson = function(){
     let user = this.toObject();
     delete user.password;
     return user;
 };
 
 
-userSchema.methods.comparePasswords = function(password){
+UserSchema.methods.comparePasswords = function(password){
     const user = this;
     return compareSync(password, user.password);
 }
 
-userSchema.pre("save",async function (next){
+UserSchema.pre("save",async function (next){
     const user = this;
 
     if(!user.isModified("password")){
@@ -48,4 +48,4 @@ userSchema.pre("save",async function (next){
 
 
 
-module.exports = mongoose.model('user',userSchema);
+module.exports = mongoose.model('user',UserSchema);

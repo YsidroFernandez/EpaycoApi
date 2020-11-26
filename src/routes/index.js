@@ -3,7 +3,7 @@
 const express = require('express');
 const api = express.Router();
 const { AuthMiddleware } = require('../middelwares');
-const { UserController, CardController, AccountController } = require('../controllers');
+const { UserController, CardController, AccountController, PurchaseController } = require('../controllers');
 
 
 /****************** Users ********************* */
@@ -27,5 +27,10 @@ api.get('/account',AuthMiddleware,AccountController.getAccounts); // get all acc
 api.delete('/account/:accountId',AuthMiddleware,AccountController.deleteAccount)  //delete account
 api.put('/recharge',AuthMiddleware,AccountController.reachargeBalance); //recharge Balance
 
+/*******************Purchase***************** */
+api.post('/registerPurchase',AuthMiddleware,PurchaseController.registerPurchase); // Send Pruchase
+api.post('/sendEmail',AuthMiddleware,PurchaseController.sendEmail); // Send verification
+api.post('/confirmPurchase',AuthMiddleware,PurchaseController.confirmPruchase); // Send Pruchase
+api.get('/getPurchases',AuthMiddleware,PurchaseController.getPurchases); // get all cards
 
 module.exports = api
