@@ -23,8 +23,12 @@ function singUp(req, resp) {
 
     user.save((err, userStored) => {
         if (err) resp.status(500).send({ status : 500, message: `Error al registrar el usuario ${err}` })
-        userStored.password = undefined;
-        resp.status(200).send({ status: 200, user: userStored, message: "Usuario registrado satisfactoriamente" });
+        
+        if(userStored != null){
+            userStored.password = undefined;
+            resp.status(200).send({ status: 200, user: userStored, message: "Usuario registrado satisfactoriamente" });
+        }
+       
     })
 }
 

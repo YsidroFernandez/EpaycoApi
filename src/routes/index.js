@@ -26,6 +26,8 @@ api.post('/registerAccount',AuthMiddleware,AccountController.registerAccount); /
 api.get('/account',AuthMiddleware,AccountController.getAccounts); // get all accounts
 api.delete('/account/:accountId',AuthMiddleware,AccountController.deleteAccount)  //delete account
 api.put('/recharge',AuthMiddleware,AccountController.reachargeBalance); //recharge Balance
+api.post('/checkBalance',AuthMiddleware,AccountController.checkBalance); // get balance account
+
 
 /*******************Purchase***************** */
 api.post('/registerPurchase',AuthMiddleware,PurchaseController.registerPurchase); // Send Pruchase

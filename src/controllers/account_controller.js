@@ -117,11 +117,56 @@ function reachargeBalance(req,resp){
         
     });
 }
+
+
+function checkBalance(req,resp){
+
+    let email = req.body.email;
+    let phone = req.body.phone;
+
+    UserModel.find({ email: email, phone: phone }, (err, user) =>{
+        if(err) return resp.status(500).send({message : `Error de solicitud ${err}`});
+
+        
+        if(user.length > 0){
+            
+            // Find the virtual account
+
+            let usuario = user[0];
+            let id_user = usuario._id;
+
+            AccountModel.find({user : id_user},(error, account)=>{
+
+                if(account.length > 0){
+                    
+                    resp.status(200).send({status : 200 ,account ,message : 'Consulta satisfactoria'});
+
+                }else{
+                    resp.status(200).send({status : 200 ,account ,message : 'Cuenta virtual no encontrada'});
+                }
+                
+            });
+            
+                
+
+        }else{
+            resp.status(200).send({status : 404 ,message : 'Usuario no encontrado'});
+
+        }
+        
+        
+    });
+}
+
+
+
+
 module.exports = {
     registerAccount,
     getAccounts,
     getAccountById,
     updateAccount,
     deleteAccount,
-    reachargeBalance
+    reachargeBalance,
+    checkBalance
 }
