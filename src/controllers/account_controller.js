@@ -3,29 +3,6 @@
 const { AccountModel, UserModel } = require('../models')
 
 
-function registerAccount(req, resp) { 
-    
-    
-    
-    var account = new AccountModel(
-        {
-            virtual_number: req.body.virtual_number,
-            card: req.body.card,
-            user: req.body.user,
-            balance: req.body.balance,
-        }
-    );
-
-
-    account.save((err, accountStored) => {
-        if (err) resp.status(500).send({ status : 500, message: `Error al registrar la cuenta ${err}` })
-
-        resp.status(200).send({ status: 200, card: accountStored, message: "Cuenta registrada correctamente" });
-    })
-}
-
-
-
 function getAccounts(req, resp) {
 
     AccountModel.find({}, (err, accounts) => {
@@ -162,7 +139,6 @@ function checkBalance(req,resp){
 
 
 module.exports = {
-    registerAccount,
     getAccounts,
     getAccountById,
     updateAccount,

@@ -22,7 +22,7 @@ var AccountSchema = Schema({
         unique  : true,
         autopopulate: { select: ['email','document','name', 'last_name','phone'] }
     },
-    balance: { type: Number }
+    balance: { type: Number, default :0 }
 
 });
 

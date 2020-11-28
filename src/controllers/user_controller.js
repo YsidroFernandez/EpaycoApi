@@ -1,6 +1,6 @@
 'use strict'
 
-const { UserModel } = require('../models')
+const { UserModel, AccountModel } = require('../models')
 const Service = require('../service')
 
 
@@ -26,7 +26,24 @@ function singUp(req, resp) {
         
         if(userStored != null){
             userStored.password = undefined;
-            resp.status(200).send({ status: 200, user: userStored, message: "Usuario registrado satisfactoriamente" });
+      
+
+            var account = new AccountModel(
+                {
+                    user: userStored._id
+                }
+            );
+        
+        
+            account.save((error, accountStored) => {
+                if (error) resp.status(500).send({ status : 500, message: `Error al registrar la cuenta ${err}` })
+        
+                resp.status(200).send({ status: 200,user: userStored ,account: accountStored, message: "Usuario registrado satisfactoriamente" });
+            });
+        
+
+
+            
         }
        
     })
@@ -34,6 +51,7 @@ function singUp(req, resp) {
 
 function singIn(req, resp) {
     UserModel.find({ email: req.body.email }, (err, user) => {
+        
         if (err) return resp.status(500).send({ status: 'error', message: err.status })
         if (user.length === 0) return resp.status(200).send({ status: '404', message: 'Usuario no existe' })
 
