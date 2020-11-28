@@ -124,7 +124,7 @@ function confirmPruchase(req,resp){
     let token = req.body.token;
     let session = req.body.session;
     let id_user = req.body.id_user;
-    let amount = req.body.amount
+    let amount = parseInt(req.body.amount);
 
     let body = {
         confirm : true
@@ -143,7 +143,7 @@ function confirmPruchase(req,resp){
                         
                         let new_account = account[0];
     
-                        new_account.balance = (new_account.balance - amount);
+                        new_account.balance = (parseInt(new_account.balance) - amount);
                       
     
                         AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (er, accountUpdate)=>{
