@@ -136,7 +136,7 @@ function confirmPruchase(req,resp){
         if(purchase != null){
 
             // update balance in the virtual account
-            if(purchase.confirm != true){
+            if(purchase.confirm == true){
                 AccountModel.find({user : id_user},(error, account)=>{
         
                     if(account.length > 0){
@@ -163,7 +163,7 @@ function confirmPruchase(req,resp){
                 });
 
             }else{
-                resp.status(500 ).send({ status: 500, message : 'Error, la compra ya ha sido confirmada'});
+                resp.status(500 ).send({ status: 500, message : 'Error, la compra no ha sido confirmada'});
             }
             
 

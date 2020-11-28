@@ -46,7 +46,7 @@ function deleteAccount(req, resp) {
 
 function reachargeBalance(req,resp){
 
-    let  balance = req.body.balance;
+    let  balance = parseInt(req.body.balance);
 
     UserModel.find({ document: req.body.document, phone: req.body.phone }, (err, user) =>{
         if(err) return resp.status(500).send({message : `Error de solicitud ${err}`});
@@ -66,7 +66,7 @@ function reachargeBalance(req,resp){
                     
                     let new_account = account[0];
 
-                    new_account.balance += balance;
+                    new_account.balance =  new_account.balance + balance;
 
                     AccountModel.findOneAndUpdate({user : id_user}, new_account, { new :true }, (error, account)=>{
                         if(error) return resp.status(500).send({ message : `Error al hacer la racarga ${error}`});
@@ -98,10 +98,10 @@ function reachargeBalance(req,resp){
 
 function checkBalance(req,resp){
 
-    let email = req.body.email;
+    let document = req.body.document;
     let phone = req.body.phone;
 
-    UserModel.find({ email: email, phone: phone }, (err, user) =>{
+    UserModel.find({ document: document, phone: phone }, (err, user) =>{
         if(err) return resp.status(500).send({message : `Error de solicitud ${err}`});
 
         

@@ -25,7 +25,7 @@ api.delete('/card/:cardId',AuthMiddleware,CardController.deleteCard)  //update c
 
 api.get('/account',AuthMiddleware,AccountController.getAccounts); // get all accounts
 api.delete('/account/:accountId',AuthMiddleware,AccountController.deleteAccount)  //delete account
-api.put('/recharge',AuthMiddleware,AccountController.reachargeBalance); //recharge Balance
+api.post('/recharge',AccountController.reachargeBalance); //recharge Balance
 api.post('/checkBalance',AccountController.checkBalance); // get balance account
 
 
